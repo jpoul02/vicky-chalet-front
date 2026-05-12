@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import axios from 'axios'
+import { isAxiosError } from 'axios'
 import { PeriodoResumenCard } from '@/components/periodo-resumen-card'
 import { InversionesList } from '@/components/inversiones-list'
 import { NuevaInversionDrawer } from '@/components/nueva-inversion-drawer'
@@ -31,7 +31,7 @@ export default function DashboardPage() {
       setCorte(pc.corte)
       setInversiones(invs)
     } catch (err) {
-      if (axios.isAxiosError(err) && err.response?.status === 404) {
+      if (isAxiosError(err) && err.response?.status === 404) {
         // No active period — show empty state instead of error
       } else {
         setError('Error al cargar datos. Intenta de nuevo.')

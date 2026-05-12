@@ -9,7 +9,7 @@ import {
   mockInversionesActivo, mockPeriodosCerrados, mockCostosFijos,
   mockTendencias, mockPeriodosPasadosCreados
 } from './mock-data'
-import { getToken } from './auth'
+import { getToken, setToken } from './auth'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/v1'
 
@@ -50,7 +50,6 @@ export async function loginWithPin(pin: string): Promise<Usuario> {
     return mockUsuario
   }
   const { data } = await apiClient.post<Usuario & { access_token: string }>('/auth/login-pin', { pin })
-  const { setToken } = await import('./auth')
   setToken(data.access_token)
   return data
 }
