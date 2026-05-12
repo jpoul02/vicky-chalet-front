@@ -24,6 +24,25 @@ apiClient.interceptors.request.use((config) => {
   return config
 })
 
+function snakeToCamel(s: string): string {
+  return s.replace(/_([a-z])/g, (_, l) => l.toUpperCase())
+}
+
+function convertKeys(obj: unknown): unknown {
+  if (Array.isArray(obj)) return obj.map(convertKeys)
+  if (obj !== null && typeof obj === 'object') {
+    return Object.fromEntries(
+      Object.entries(obj as Record<string, unknown>).map(([k, v]) => [snakeToCamel(k), convertKeys(v)])
+    )
+  }
+  return obj
+}
+
+apiClient.interceptors.response.use((response) => {
+  response.data = convertKeys(response.data)
+  return response
+})
+
 // ─── Mock flag — set NEXT_PUBLIC_USE_MOCK=true in .env.local ─────────────────
 const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === 'true'
 
