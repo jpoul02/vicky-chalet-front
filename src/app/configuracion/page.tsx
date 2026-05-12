@@ -22,7 +22,7 @@ export default function ConfiguracionPage() {
     <div className="px-4 pt-6 space-y-4 lg:max-w-2xl lg:mx-auto lg:px-8 lg:pt-8">
       <h1 className="text-xl font-bold text-text">Configuración</h1>
 
-      <div className="space-y-6">
+      <div className="space-y-6 mt-4">
         {ITEMS.map(({ href, icon: Icon, label, desc }) => (
           <Link key={href} href={href}>
             <div className="flex items-center gap-3 bg-surface rounded-2xl px-4 py-4 shadow-sm">
