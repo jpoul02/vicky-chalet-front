@@ -4,8 +4,8 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, MessageCircle } from 'lucide-react'
 
 const COMANDOS = [
-  { cmd: '"gasté 50 en pan"', desc: 'Registra una inversión adicional de ₡50 con descripción "pan"' },
-  { cmd: '"invertí 200 inicial"', desc: 'Registra una inversión inicial de ₡200' },
+  { cmd: '"gasté 50 en pan"', desc: 'Registra una inversión adicional de $50 con descripción "pan"' },
+  { cmd: '"invertí 200 inicial"', desc: 'Registra una inversión inicial de $200' },
   { cmd: '"¿cuánto llevo?"', desc: 'Muestra el total de egresos del período activo' },
   { cmd: '"balance"', desc: 'Mismo que "¿cuánto llevo?"' },
 ]
