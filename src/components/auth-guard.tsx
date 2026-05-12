@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
-import { isAuthenticated, refreshSession } from '@/lib/auth'
+import { isAuthenticated, refreshSession, getToken, clearSession } from '@/lib/auth'
 
 interface AuthGuardProps {
   children: React.ReactNode
@@ -18,7 +18,8 @@ export function AuthGuard({ children }: AuthGuardProps) {
       setReady(true)
       return
     }
-    if (!isAuthenticated()) {
+    if (!isAuthenticated() || !getToken()) {
+      clearSession()
       router.replace('/auth')
     } else {
       refreshSession()
