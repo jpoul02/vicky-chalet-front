@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Store, Delete } from 'lucide-react'
-import { verifyPin } from '@/lib/auth-actions'
-import { setAuthenticated, isFirstLogin } from '@/lib/auth'
+import { loginWithPin } from '@/lib/api'
+import { setAuthenticated, setCurrentUser, isFirstLogin } from '@/lib/auth'
 import { OnboardingModal } from '@/components/onboarding-modal'
 import { cn } from '@/lib/utils'
 
@@ -27,15 +27,16 @@ export default function AuthPage() {
   async function submit(value: string) {
     setLoading(true)
     setError(false)
-    const ok = await verifyPin(value)
-    if (ok) {
+    try {
+      const user = await loginWithPin(value)
+      setCurrentUser(user)
       setAuthenticated(true)
       if (isFirstLogin()) {
         setShowOnboarding(true)
       } else {
         router.replace('/dashboard')
       }
-    } else {
+    } catch {
       setError(true)
       setPin('')
     }

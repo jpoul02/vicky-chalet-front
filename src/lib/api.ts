@@ -36,6 +36,16 @@ export async function login(email: string, password: string): Promise<Usuario> {
   return data
 }
 
+export async function loginWithPin(pin: string): Promise<Usuario> {
+  if (USE_MOCK) {
+    await delay()
+    if (pin !== '000000') throw new Error('PIN incorrecto')
+    return mockUsuario
+  }
+  const { data } = await apiClient.post<Usuario>('/auth/login-pin', { pin })
+  return data
+}
+
 export async function logout(): Promise<void> {
   if (USE_MOCK) { await delay(); return }
   await apiClient.post('/auth/logout')

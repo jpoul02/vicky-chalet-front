@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { isAuthenticated, refreshSession } from '@/lib/auth'
 
@@ -11,19 +11,22 @@ interface AuthGuardProps {
 export function AuthGuard({ children }: AuthGuardProps) {
   const router = useRouter()
   const pathname = usePathname()
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    if (pathname === '/auth') return
+    if (pathname === '/auth') {
+      setReady(true)
+      return
+    }
     if (!isAuthenticated()) {
       router.replace('/auth')
     } else {
       refreshSession()
+      setReady(true)
     }
   }, [pathname, router])
 
-  if (pathname !== '/auth' && !isAuthenticated()) {
-    return null
-  }
+  if (!ready) return null
 
   return <>{children}</>
 }
