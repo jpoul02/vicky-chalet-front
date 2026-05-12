@@ -1,15 +1,18 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import axios from 'axios'
 import { PeriodoResumenCard } from '@/components/periodo-resumen-card'
 import { InversionesList } from '@/components/inversiones-list'
 import { NuevaInversionDrawer } from '@/components/nueva-inversion-drawer'
 import { getPeriodoActivo, getPeriodo, getInversiones, crearInversion } from '@/lib/api'
 import type { Periodo, CorteResumen, Inversion, NuevaInversionInput } from '@/lib/types'
-import { Plus } from 'lucide-react'
+import { Plus, TrendingUp, CalendarPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export default function DashboardPage() {
+  const router = useRouter()
   const [periodo, setPeriodo] = useState<Periodo | null>(null)
   const [corte, setCorte] = useState<CorteResumen | null>(null)
   const [inversiones, setInversiones] = useState<Inversion[]>([])
@@ -27,8 +30,12 @@ export default function DashboardPage() {
       setPeriodo(pc)
       setCorte(pc.corte)
       setInversiones(invs)
-    } catch {
-      setError('Error al cargar datos. Intenta de nuevo.')
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 404) {
+        // No active period — show empty state instead of error
+      } else {
+        setError('Error al cargar datos. Intenta de nuevo.')
+      }
     } finally {
       setLoading(false)
     }
@@ -60,17 +67,42 @@ export default function DashboardPage() {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-4 px-6">
-        <p className="text-danger text-sm text-center">{error}</p>
-        <button onClick={cargar} className="text-primary text-sm underline">Reintentar</button>
+      <div className="flex flex-col items-center justify-center min-h-screen gap-6 px-8">
+        <div className="w-20 h-20 rounded-3xl bg-danger/10 flex items-center justify-center">
+          <TrendingUp size={36} className="text-danger" />
+        </div>
+        <div className="text-center space-y-1">
+          <p className="text-base font-semibold text-text">Algo salió mal</p>
+          <p className="text-sm text-muted">No se pudieron cargar los datos</p>
+        </div>
+        <button
+          onClick={cargar}
+          className="h-11 px-6 rounded-2xl bg-primary text-white text-sm font-semibold"
+        >
+          Reintentar
+        </button>
       </div>
     )
   }
 
   if (!periodo || !corte) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-4 px-6">
-        <p className="text-muted text-sm text-center">No hay período activo. Crea uno en Períodos.</p>
+      <div className="flex flex-col items-center justify-center min-h-screen gap-6 px-8">
+        <div className="w-24 h-24 rounded-3xl bg-primary/10 flex items-center justify-center">
+          <CalendarPlus size={42} className="text-primary" />
+        </div>
+        <div className="text-center space-y-2">
+          <p className="text-lg font-bold text-text">Sin período activo</p>
+          <p className="text-sm text-muted leading-relaxed">
+            Creá un período para empezar a registrar tus inversiones y costos del mes.
+          </p>
+        </div>
+        <button
+          onClick={() => router.push('/periodos')}
+          className="h-11 px-6 rounded-2xl bg-primary text-white text-sm font-semibold"
+        >
+          Crear período
+        </button>
       </div>
     )
   }
