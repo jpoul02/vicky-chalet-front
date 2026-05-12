@@ -2,6 +2,7 @@ import type { Usuario } from './types'
 
 const SESSION_KEY = 'finanzas_session'
 const USER_KEY = 'finanzas_user'
+const TOKEN_KEY = 'finanzas_token'
 const SESSION_DURATION_MS = 30 * 60 * 1000 // 30 minutes
 
 interface Session {
@@ -27,6 +28,21 @@ export function setCurrentUser(user: Usuario): void {
 function clearCurrentUser(): void {
   if (typeof window === 'undefined') return
   localStorage.removeItem(USER_KEY)
+}
+
+export function getToken(): string | null {
+  if (typeof window === 'undefined') return null
+  return localStorage.getItem(TOKEN_KEY)
+}
+
+export function setToken(token: string): void {
+  if (typeof window === 'undefined') return
+  localStorage.setItem(TOKEN_KEY, token)
+}
+
+function clearToken(): void {
+  if (typeof window === 'undefined') return
+  localStorage.removeItem(TOKEN_KEY)
 }
 
 export function isAuthenticated(): boolean {
@@ -66,6 +82,7 @@ export function clearSession(): void {
   if (typeof window === 'undefined') return
   localStorage.removeItem(SESSION_KEY)
   clearCurrentUser()
+  clearToken()
 }
 
 export function isFirstLogin(): boolean {

@@ -9,12 +9,19 @@ import {
   mockInversionesActivo, mockPeriodosCerrados, mockCostosFijos,
   mockTendencias, mockPeriodosPasadosCreados
 } from './mock-data'
+import { getToken } from './auth'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/v1'
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,
-  withCredentials: true, // sends httpOnly cookie
+  withCredentials: true,
+})
+
+apiClient.interceptors.request.use((config) => {
+  const token = getToken()
+  if (token) config.headers['Authorization'] = `Bearer ${token}`
+  return config
 })
 
 // ─── Mock flag — set NEXT_PUBLIC_USE_MOCK=true in .env.local ─────────────────
@@ -42,7 +49,9 @@ export async function loginWithPin(pin: string): Promise<Usuario> {
     if (pin !== '000000') throw new Error('PIN incorrecto')
     return mockUsuario
   }
-  const { data } = await apiClient.post<Usuario>('/auth/login-pin', { pin })
+  const { data } = await apiClient.post<Usuario & { access_token: string }>('/auth/login-pin', { pin })
+  const { setToken } = await import('./auth')
+  setToken(data.access_token)
   return data
 }
 
