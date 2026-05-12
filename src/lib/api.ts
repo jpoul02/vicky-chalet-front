@@ -68,8 +68,8 @@ export async function loginWithPin(pin: string): Promise<Usuario> {
     if (pin !== '000000') throw new Error('PIN incorrecto')
     return mockUsuario
   }
-  const { data } = await apiClient.post<Usuario & { access_token: string }>('/auth/login-pin', { pin })
-  setToken(data.access_token)
+  const { data } = await apiClient.post<Usuario & { accessToken: string }>('/auth/login-pin', { pin })
+  setToken(data.accessToken)
   return data
 }
 
